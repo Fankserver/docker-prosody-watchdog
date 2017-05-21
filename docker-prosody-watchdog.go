@@ -95,7 +95,7 @@ func check(version string) {
 				i.lastChange[version] = item.GUID
 			}
 
-			if i.lastChange[version] == item.GUID {
+			if i.lastChange[version] != item.GUID {
 				log.Println("Change")
 
 				cmd := exec.Command(`curl`, `-H`, `Content-Type: application/json`, `--data`, `{"docker_tag": "`+version+`-dev"}`, `-X`, `POST`, `https://registry.hub.docker.com/u/fankserver/prosody/trigger/`+os.Getenv("DOCKER_KEY")+`/`)
