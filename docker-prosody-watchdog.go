@@ -23,7 +23,7 @@ type info struct {
 }
 
 const githubRepoOwner = "Fankserver"
-const githubRepoName = "docker-prosody-test"
+const githubRepoName = "docker-prosody"
 
 var i *info
 
