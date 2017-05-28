@@ -104,6 +104,7 @@ func check(version string) {
 				if err != nil {
 					log.Fatal(err)
 				}
+				i.lastChange[version] = item.GUID
 			}
 			skipChange = true
 		}
