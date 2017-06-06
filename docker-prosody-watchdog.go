@@ -34,9 +34,11 @@ func main() {
 	}
 	check("0.9")
 	check("0.10")
+	check("trunk")
 	c := cron.New()
 	c.AddFunc("@every 5m", func() { check("0.9") })
 	c.AddFunc("@every 5m", func() { check("0.10") })
+	c.AddFunc("@every 5m", func() { check("trunk") })
 	c.Run()
 }
 
@@ -50,7 +52,7 @@ func check(version string) {
 			return
 		}
 
-		if strings.Contains(c.Files, ".hgtags") {
+		if version != "trunk" && strings.Contains(c.Files, ".hgtags") {
 			log.Println(version, "Tag found:", item.Title)
 			re, err := regexp.Compile(`(` + version + `\.\d+)`)
 			if err != nil {
@@ -98,7 +100,11 @@ func check(version string) {
 			if i.lastChange[version] != item.GUID {
 				log.Println("Change")
 
-				cmd := exec.Command(`curl`, `-H`, `Content-Type: application/json`, `--data`, `{"docker_tag": "`+version+`-dev"}`, `-X`, `POST`, `https://registry.hub.docker.com/u/fankserver/prosody/trigger/`+os.Getenv("DOCKER_KEY")+`/`)
+				dockerTag := version
+				if version != "trunk" {
+					dockerTag += "-dev"
+				}
+				cmd := exec.Command(`curl`, `-H`, `Content-Type: application/json`, `--data`, `{"docker_tag": "`+dockerTag+`"}`, `-X`, `POST`, `https://registry.hub.docker.com/u/fankserver/prosody/trigger/`+os.Getenv("DOCKER_KEY")+`/`)
 				stdoutStderr, err := cmd.CombinedOutput()
 				log.Println(string(stdoutStderr))
 				if err != nil {
